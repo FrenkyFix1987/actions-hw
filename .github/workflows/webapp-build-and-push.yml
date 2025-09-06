@@ -73,7 +73,7 @@ jobs:
       - name: Terraform Init
         run: |
           cd infra
-          terraform init -input=false
+          terraform init -input=false -backend-config="key=${{ env.REPO }}-terraform.tfstate"
         
       - name: Terraform fmt
         run: |

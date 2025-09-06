@@ -11,7 +11,7 @@ permissions:
   packages: write
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -49,6 +49,49 @@ jobs:
           tags: |
             ghcr.io/${{ env.REPO }}/flask-webapp:latest
             ghcr.io/${{ env.REPO }}/flask-webapp:${{ github.run_number }}
-          
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.11.4
+      - name: Terraform Init
+        run: |
+          cd infra
+          terraform init -input=false
+        
+      - name: Terraform fmt
+        run: |
+          cd infra
+          terraform fmt -check
+
+      - name: Terraform Validate
+        run: |
+          cd infra
+          terraform validate
     
-      
+      - name: downcase REPO
+        run: |
+          echo "REPO=${GITHUB_ACTOR,,}" >> ${GITHUB_ENV}
+
+      - name: Terraform Apply
+        env:
+          TF_VARS_docker_image: "ghcr.io/${{ env.REPO }}/flask-webapp:${{ github.run_number }}"
+          TF_VARS_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VARS_name_prefix: ${{ env.REPO }}
+        run: |
+          cd infra
+          terraform apply -auto-approve -input=false

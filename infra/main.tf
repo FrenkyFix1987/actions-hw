@@ -52,7 +52,7 @@ resource "azurerm_container_group" "flask_app" {
     }
 
     tags = {
-        environment = "demo"
+        environment = "demo2"
         Application = "flask-webapp"
     }
   

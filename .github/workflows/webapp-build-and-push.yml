@@ -89,9 +89,9 @@ jobs:
 
       - name: Terraform Apply
         env:
-          TF_VARS_docker_image: "ghcr.io/${{ env.REPO }}/flask-webapp:${{ github.run_number }}"
-          TF_VARS_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          TF_VARS_name_prefix: ${{ env.REPO }}
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_name_prefix: ${{ env.REPO }}
+          TF_VAR_docker_image: ghcr.io/${{ env.REPO }}/flask-webapp:${{ github.run_number }}
         run: |
           cd infra
           terraform apply -auto-approve -input=false

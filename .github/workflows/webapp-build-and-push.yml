@@ -43,8 +43,8 @@ jobs:
           file: webapp/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/flask-webapp:latest
-            ghcr.io/${{ github.repository_owner }}/flask-webapp:${{ github.run_number }}
+            ghcr.io/frenkyfix1987/flask-webapp:latest
+            ghcr.io/frenkyfix1987/flask-webapp:${{ github.run_number }}
           
     
       

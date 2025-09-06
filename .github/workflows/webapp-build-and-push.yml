@@ -1,4 +1,4 @@
-name: Webapp buld and push
+name: Webapp build, push and deploy 
 on:
   push:
     branches:
